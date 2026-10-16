@@ -14,9 +14,8 @@ class RegistrationController extends Controller
 {
     public function create(): Response
     {
-        return Inertia::render('welcome', [
+        return Inertia::render('registration', [
             'categories' => Registration::CATEGORIES,
-            'totalRegistered' => Registration::count(),
         ]);
     }
 
