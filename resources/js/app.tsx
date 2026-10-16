@@ -8,11 +8,22 @@ import SettingsLayout from '@/layouts/settings/layout';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// Halaman publik festival punya layout sendiri (FestivalLayout), jadi tidak pakai AppLayout.
+const festivalPages = [
+    'welcome',
+    'about',
+    'schedule',
+    'gallery',
+    'faq',
+    'registration',
+    'registration-success',
+];
+
 void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
-            case name === 'welcome':
+            case festivalPages.includes(name):
                 return null;
             case name.startsWith('auth/'):
                 return AuthLayout;
