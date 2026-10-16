@@ -136,7 +136,7 @@ export default function Welcome({ categories, totalRegistered }: Props) {
                 </section>
 
                 <footer className="relative z-10 pb-8 text-center text-sm text-white/50">
-                    © Dugong Cosplay Fest — dibuat dengan 💙 untuk belajar Laravel Mail
+                    © Dugong Cosplay Fest — dibuat dengan 💙 oleh Profesor Dugong
                 </footer>
             </OceanPage>
         </>
