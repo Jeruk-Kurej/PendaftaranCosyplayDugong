@@ -23,8 +23,10 @@ class RegistrationController extends Controller
     {
         $registration = Registration::create($request->validated());
 
-        // Kirim email konfirmasi. Ganti ke ->queue(...) kalau mau diproses di background.
-        Mail::to($registration->email)->send(new RegistrationConfirmed($registration));
+        // Diproses di background (queue) supaya pendaftar tidak menunggu SMTP dan
+        // pendaftaran tetap sukses walau email gagal terkirim.
+        // Penerima sudah diatur di envelope() pada RegistrationConfirmed.
+        Mail::send(new RegistrationConfirmed($registration));
 
         return to_route('registration.success', $registration->ticket_code);
     }
