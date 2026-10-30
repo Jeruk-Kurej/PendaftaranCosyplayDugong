@@ -4,27 +4,17 @@ namespace App\Mail;
 
 use App\Models\Registration;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RegistrationConfirmed extends Mailable implements ShouldQueue
+class RegistrationConfirmed extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /** Jumlah percobaan ulang kalau SMTP sedang bermasalah. */
-    public int $tries = 3;
-
-    /** Jeda (detik) antar percobaan ulang. */
-    public array $backoff = [30, 120];
-
-    public function __construct(public Registration $registration)
-    {
-        $this->afterCommit();
-    }
+    public function __construct(public Registration $registration) {}
 
     /**
      * Header email: siapa pengirim & penerima, balasan ke mana, dan subjeknya.

@@ -16,7 +16,7 @@ test('landing page renders', function () {
     $this->get('/')->assertOk();
 });
 
-test('registration is stored and confirmation email is queued', function () use ($payload) {
+test('registration is stored and confirmation email is sent', function () use ($payload) {
     Mail::fake();
 
     $response = $this->post('/daftar', $payload);
@@ -27,7 +27,7 @@ test('registration is stored and confirmation email is queued', function () use 
 
     $response->assertRedirect(route('registration.success', $registration));
 
-    Mail::assertQueued(RegistrationConfirmed::class, fn ($mail) => $mail->hasTo('budi@example.com'));
+    Mail::assertSent(RegistrationConfirmed::class, fn ($mail) => $mail->hasTo('budi@example.com'));
 });
 
 test('duplicate email and invalid data are rejected', function () use ($payload) {
@@ -38,10 +38,18 @@ test('duplicate email and invalid data are rejected', function () use ($payload)
     $this->post('/daftar', [...$payload, 'email' => 'x@y.com', 'phone' => 'abc', 'category' => 'Raja'])
         ->assertSessionHasErrors(['phone', 'category']);
 
-    Mail::assertNothingQueued();
+    Mail::assertNothingSent();
 });
 
 test('mailable renders', function () {
     $html = (new RegistrationConfirmed(Registration::factory()->create()))->render();
     expect($html)->toContain('DUGONG-');
+});
+
+test('registration still succeeds when the confirmation email fails', function () use ($payload) {
+    Mail::shouldReceive('send')->once()->andThrow(new RuntimeException('SMTP down'));
+
+    $this->post('/daftar', $payload)->assertRedirect();
+
+    expect(Registration::where('email', 'budi@example.com')->exists())->toBeTrue();
 });
