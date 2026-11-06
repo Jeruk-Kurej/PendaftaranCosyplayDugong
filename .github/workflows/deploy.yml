@@ -110,8 +110,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ vars.SSH_PORT || 22 }}
           envs: APP_PATH
-          script_stop: true
           script: |
+            set -e
             cd "$APP_PATH"
 
             git pull --ff-only origin main
