@@ -2,6 +2,9 @@ name: deploy
 
 # Jalan otomatis setelah workflow "tests" sukses di branch main.
 # Bisa juga dijalankan manual dari tab Actions (Run workflow).
+#
+# Secrets (kredensial)     : SSH_HOST, SSH_USERNAME, lalu SSH_PASSWORD atau SSH_PRIVATE_KEY
+# Variables (bukan rahasia): APP_PATH (wajib), SSH_PORT (opsional, default 22)
 on:
   workflow_run:
     workflows: [tests]
@@ -17,18 +20,38 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false
 
+env:
+  APP_PATH: ${{ vars.APP_PATH }}
+
 jobs:
   deploy:
+    name: Build & deploy to live hosting
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    environment: production
-
-    env:
-      SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_USER: ${{ secrets.SSH_USER }}
-      APP_PATH: ${{ vars.APP_PATH }}
+    timeout-minutes: 15
 
     steps:
+      # Gagal cepat kalau konfigurasi belum lengkap, sebelum membuang waktu untuk build.
+      - name: Check deploy configuration
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          missing=0
+          for name in SSH_HOST SSH_USERNAME APP_PATH; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name belum diisi (Settings > Secrets and variables > Actions)"
+              missing=1
+            fi
+          done
+          if [ -z "$SSH_PASSWORD" ] && [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "::error::Isi salah satu: secret SSH_PASSWORD atau SSH_PRIVATE_KEY"
+            missing=1
+          fi
+          exit "$missing"
+
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -48,9 +71,10 @@ jobs:
           node-version: '22'
           cache: npm
 
-      # Aset frontend (public/build) tidak masuk git, jadi dibangun di sini lalu dikirim ke server.
-      # Wayfinder butuh aplikasi bisa boot saat build, makanya .env sementara dibuat.
-      - name: Build frontend assets
+      # vendor/ dan public/build tidak masuk git dan server tidak punya Composer/Node,
+      # jadi keduanya dibangun di sini. Wayfinder butuh aplikasi bisa boot saat build,
+      # makanya .env sementara dibuat (hanya ada di runner ini, tidak dikirim).
+      - name: Build application
         run: |
           composer install --no-interaction --prefer-dist --no-progress
           cp .env.example .env
@@ -58,31 +82,51 @@ jobs:
           npm ci
           npm run build
 
-      - name: Prepare SSH
-        run: |
-          install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+      - name: Install production dependencies only
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress
 
-      - name: Upload built assets
-        run: |
-          rsync -az --delete-after \
-            -e "ssh -i ~/.ssh/deploy_key" \
-            public/build/ "$SSH_USER@$SSH_HOST:$APP_PATH/public/build/"
+      - name: Package vendor and built assets
+        run: tar -czf release.tar.gz vendor public/build
 
-      - name: Update code and run migrations on server
-        run: |
-          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" "APP_PATH='$APP_PATH' bash -s" <<'REMOTE'
-          set -euo pipefail
-          cd "$APP_PATH"
+      - name: Upload package to server
+        uses: appleboy/scp-action@ff85246acaad7bdce478db94a363cd2bf7c90345 # v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ vars.SSH_PORT || 22 }}
+          source: release.tar.gz
+          target: ${{ env.APP_PATH }}
 
-          git pull --ff-only origin main
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-          php artisan migrate --force --no-interaction
-          php artisan optimize:clear
-          php artisan optimize
-          REMOTE
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ vars.SSH_PORT || 22 }}
+          envs: APP_PATH
+          script_stop: true
+          script: |
+            cd "$APP_PATH"
+
+            git pull --ff-only origin main
+
+            # Ekstrak ke folder sementara lalu tukar, supaya vendor/ tidak kosong lama-lama.
+            rm -rf .release && mkdir .release
+            tar -xzf release.tar.gz -C .release
+            rm -f release.tar.gz
+
+            rm -rf vendor.old
+            if [ -d vendor ]; then mv vendor vendor.old; fi
+            mv .release/vendor vendor
+            rm -rf public/build
+            mv .release/public/build public/build
+            rm -rf .release vendor.old
+
+            php artisan package:discover --ansi
+            php artisan migrate --force --no-interaction
+            php artisan optimize:clear
+            php artisan optimize
