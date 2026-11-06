@@ -1,0 +1,88 @@
+name: deploy
+
+# Jalan otomatis setelah workflow "tests" sukses di branch main.
+# Bisa juga dijalankan manual dari tab Actions (Run workflow).
+on:
+  workflow_run:
+    workflows: [tests]
+    types: [completed]
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      APP_PATH: ${{ vars.APP_PATH }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Aset frontend (public/build) tidak masuk git, jadi dibangun di sini lalu dikirim ke server.
+      # Wayfinder butuh aplikasi bisa boot saat build, makanya .env sementara dibuat.
+      - name: Build frontend assets
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+          npm ci
+          npm run build
+
+      - name: Prepare SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Upload built assets
+        run: |
+          rsync -az --delete-after \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            public/build/ "$SSH_USER@$SSH_HOST:$APP_PATH/public/build/"
+
+      - name: Update code and run migrations on server
+        run: |
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" "APP_PATH='$APP_PATH' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP_PATH"
+
+          git pull --ff-only origin main
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+          php artisan migrate --force --no-interaction
+          php artisan optimize:clear
+          php artisan optimize
+          REMOTE
