@@ -128,6 +128,9 @@ jobs:
             mv .release/public/build public/build
             rm -rf .release vendor.old
 
+            # Cache lama bisa menyebut paket dev (mis. Boost) yang tidak ada di vendor produksi.
+            rm -f bootstrap/cache/packages.php bootstrap/cache/services.php bootstrap/cache/config.php
+
             php artisan package:discover --ansi
             php artisan migrate --force --no-interaction
             php artisan optimize:clear
