@@ -58,10 +58,12 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           persist-credentials: false
 
+      # Versi PHP disamakan dengan server (8.4) supaya build gagal di sini, bukan di produksi,
+      # kalau ada dependency yang tidak cocok.
       - name: Setup PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
-          php-version: '8.5'
+          php-version: '8.4'
           tools: composer:v2
           coverage: none
 
