@@ -15,7 +15,10 @@ export default function FestivalLayout({ children }: { children: ReactNode }) {
     return (
         <OceanPage>
             <header className="relative z-20 mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6">
-                <Link href={home()} className="text-lg font-bold tracking-tight">
+                <Link
+                    href={home()}
+                    className="text-lg font-bold tracking-tight"
+                >
                     🌊 {festival.name}
                 </Link>
                 <nav className="flex flex-wrap items-center gap-1 text-sm">
@@ -43,7 +46,9 @@ export default function FestivalLayout({ children }: { children: ReactNode }) {
                 <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 sm:grid-cols-3">
                     <div>
                         <p className="font-bold">🌊 {festival.name}</p>
-                        <p className="mt-2 text-sm text-white/60">{festival.tagline}</p>
+                        <p className="mt-2 text-sm text-white/60">
+                            {festival.tagline}
+                        </p>
                     </div>
                     <div className="text-sm text-white/70">
                         <p className="font-semibold text-white">Kontak</p>
@@ -58,7 +63,8 @@ export default function FestivalLayout({ children }: { children: ReactNode }) {
                     </div>
                 </div>
                 <p className="pb-8 text-center text-xs text-white/40">
-                    © {new Date().getFullYear()} {festival.name}. Dibuat dengan 💙
+                    © {new Date().getFullYear()} {festival.name}. Dibuat dengan
+                    💙
                 </p>
             </footer>
         </OceanPage>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\RegistrationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,7 @@ use Illuminate\Support\Str;
 #[Fillable(['name', 'email', 'phone', 'character_name', 'category', 'notes'])]
 class Registration extends Model
 {
-    /** @use HasFactory<\Database\Factories\RegistrationFactory> */
+    /** @use HasFactory<RegistrationFactory> */
     use HasFactory;
 
     public const CATEGORIES = ['Solo', 'Duo', 'Grup'];

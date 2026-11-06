@@ -12,32 +12,75 @@ export const festival = {
 export const categories = [
     {
         name: 'Solo',
-        description: 'Tampil sendiri dengan satu karakter. Fokus pada detail kostum dan performa di panggung.',
+        description:
+            'Tampil sendiri dengan satu karakter. Fokus pada detail kostum dan performa di panggung.',
     },
     {
         name: 'Duo',
-        description: 'Dua cosplayer dalam satu tema. Kekompakan dan interaksi jadi nilai utama.',
+        description:
+            'Dua cosplayer dalam satu tema. Kekompakan dan interaksi jadi nilai utama.',
     },
     {
         name: 'Grup',
-        description: 'Tiga orang atau lebih dalam satu cerita. Cocok untuk tim dengan konsep besar.',
+        description:
+            'Tiga orang atau lebih dalam satu cerita. Cocok untuk tim dengan konsep besar.',
     },
 ];
 
 export const awards = [
-    { icon: '🏆', title: 'Best Costume', text: 'Kostum paling detail dan rapi.' },
-    { icon: '🛠️', title: 'Best Craftsmanship', text: 'Apresiasi untuk properti dan kerajinan tangan.' },
-    { icon: '🐋', title: 'Dugong Spirit Award', text: 'Penampilan paling ceria dan menghibur.' },
-    { icon: '🎭', title: 'Best Performance', text: 'Penjiwaan karakter terbaik di atas panggung.' },
+    {
+        icon: '🏆',
+        title: 'Best Costume',
+        text: 'Kostum paling detail dan rapi.',
+    },
+    {
+        icon: '🛠️',
+        title: 'Best Craftsmanship',
+        text: 'Apresiasi untuk properti dan kerajinan tangan.',
+    },
+    {
+        icon: '🐋',
+        title: 'Dugong Spirit Award',
+        text: 'Penampilan paling ceria dan menghibur.',
+    },
+    {
+        icon: '🎭',
+        title: 'Best Performance',
+        text: 'Penjiwaan karakter terbaik di atas panggung.',
+    },
 ];
 
 export const schedule = [
-    { time: '09.00', title: 'Registrasi Ulang & Check-in', description: 'Tunjukkan kode tiket di meja registrasi.' },
-    { time: '10.00', title: 'Pembukaan', description: 'Sambutan panitia dan pembukaan festival.' },
-    { time: '11.00', title: 'Photo Spot Bawah Laut', description: 'Sesi foto bebas di area bertema samudra.' },
-    { time: '13.00', title: 'Lomba Solo & Duo', description: 'Penampilan panggung kategori Solo dan Duo.' },
-    { time: '16.00', title: 'Lomba Grup', description: 'Penampilan panggung kategori Grup.' },
-    { time: '19.30', title: 'Pengumuman Pemenang', description: 'Penyerahan penghargaan untuk semua kategori.' },
+    {
+        time: '09.00',
+        title: 'Registrasi Ulang & Check-in',
+        description: 'Tunjukkan kode tiket di meja registrasi.',
+    },
+    {
+        time: '10.00',
+        title: 'Pembukaan',
+        description: 'Sambutan panitia dan pembukaan festival.',
+    },
+    {
+        time: '11.00',
+        title: 'Photo Spot Bawah Laut',
+        description: 'Sesi foto bebas di area bertema samudra.',
+    },
+    {
+        time: '13.00',
+        title: 'Lomba Solo & Duo',
+        description: 'Penampilan panggung kategori Solo dan Duo.',
+    },
+    {
+        time: '16.00',
+        title: 'Lomba Grup',
+        description: 'Penampilan panggung kategori Grup.',
+    },
+    {
+        time: '19.30',
+        title: 'Pengumuman Pemenang',
+        description: 'Penyerahan penghargaan untuk semua kategori.',
+    },
 ];
 
 export const faqs = [

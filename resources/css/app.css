@@ -144,26 +144,56 @@
 
 /* Dugong Cosplay Fest — ocean theme */
 @keyframes float-y {
-    0%, 100% { transform: translateY(0) rotate(-1deg); }
-    50% { transform: translateY(-18px) rotate(1.5deg); }
+    0%,
+    100% {
+        transform: translateY(0) rotate(-1deg);
+    }
+    50% {
+        transform: translateY(-18px) rotate(1.5deg);
+    }
 }
 
 @keyframes bubble-rise {
-    0% { transform: translateY(0) scale(0.6); opacity: 0; }
-    15% { opacity: 0.7; }
-    100% { transform: translateY(-110vh) scale(1.1); opacity: 0; }
+    0% {
+        transform: translateY(0) scale(0.6);
+        opacity: 0;
+    }
+    15% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-110vh) scale(1.1);
+        opacity: 0;
+    }
 }
 
 @keyframes wave-slide {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
 }
 
 .ocean-bg {
     background:
-        radial-gradient(60rem 30rem at 80% -10%, oklch(0.75 0.14 195 / 0.35), transparent 60%),
-        radial-gradient(40rem 30rem at 0% 30%, oklch(0.6 0.17 285 / 0.3), transparent 60%),
-        linear-gradient(180deg, oklch(0.32 0.09 225) 0%, oklch(0.2 0.07 250) 55%, oklch(0.14 0.05 265) 100%);
+        radial-gradient(
+            60rem 30rem at 80% -10%,
+            oklch(0.75 0.14 195 / 0.35),
+            transparent 60%
+        ),
+        radial-gradient(
+            40rem 30rem at 0% 30%,
+            oklch(0.6 0.17 285 / 0.3),
+            transparent 60%
+        ),
+        linear-gradient(
+            180deg,
+            oklch(0.32 0.09 225) 0%,
+            oklch(0.2 0.07 250) 55%,
+            oklch(0.14 0.05 265) 100%
+        );
 }
 
 .glass {
@@ -178,13 +208,26 @@
     bottom: -40px;
     border-radius: 9999px;
     border: 1px solid oklch(1 0 0 / 0.45);
-    background: radial-gradient(circle at 30% 30%, oklch(1 0 0 / 0.5), oklch(1 0 0 / 0.05));
+    background: radial-gradient(
+        circle at 30% 30%,
+        oklch(1 0 0 / 0.5),
+        oklch(1 0 0 / 0.05)
+    );
     animation: bubble-rise linear infinite;
 }
 
-.dugong-float { animation: float-y 6s ease-in-out infinite; }
-.wave-track { animation: wave-slide 14s linear infinite; width: 200%; }
+.dugong-float {
+    animation: float-y 6s ease-in-out infinite;
+}
+.wave-track {
+    animation: wave-slide 14s linear infinite;
+    width: 200%;
+}
 
 @media (prefers-reduced-motion: reduce) {
-    .bubble, .dugong-float, .wave-track { animation: none; }
+    .bubble,
+    .dugong-float,
+    .wave-track {
+        animation: none;
+    }
 }

@@ -17,9 +17,16 @@ export default function Gallery() {
             <Head title="Galeri" />
 
             <section className="mx-auto max-w-6xl px-6 pt-8 pb-16">
-                <p className="text-sm font-semibold tracking-widest text-teal-200 uppercase">Galeri</p>
-                <h1 className="mt-3 text-5xl font-extrabold tracking-tight">Momen dari Lautan</h1>
-                <p className="mt-3 max-w-xl text-white/70">Dokumentasi edisi sebelumnya. Foto baru akan ditambahkan setelah acara.</p>
+                <p className="text-sm font-semibold tracking-widest text-teal-200 uppercase">
+                    Galeri
+                </p>
+                <h1 className="mt-3 text-5xl font-extrabold tracking-tight">
+                    Momen dari Lautan
+                </h1>
+                <p className="mt-3 max-w-xl text-white/70">
+                    Dokumentasi edisi sebelumnya. Foto baru akan ditambahkan
+                    setelah acara.
+                </p>
 
                 <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {shots.map((shot) => (

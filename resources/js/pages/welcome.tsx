@@ -32,8 +32,9 @@ export default function Welcome({ totalRegistered }: Props) {
                         Festival
                     </h1>
                     <p className="mt-5 max-w-lg text-lg text-white/75">
-                        Festival cosplay bertema laut. Tampilkan kostum terbaikmu, dari dugong imut, putri
-                        duyung, sampai kapten lamun. Semua boleh berenang bareng.
+                        Festival cosplay bertema laut. Tampilkan kostum
+                        terbaikmu, dari dugong imut, putri duyung, sampai kapten
+                        lamun. Semua boleh berenang bareng.
                     </p>
                     <div className="mt-8 flex flex-wrap gap-4">
                         <Link
@@ -55,9 +56,16 @@ export default function Welcome({ totalRegistered }: Props) {
 
             <section className="mx-auto grid max-w-6xl gap-4 px-6 sm:grid-cols-3">
                 {stats.map((stat) => (
-                    <div key={stat.label} className="glass rounded-2xl p-6 text-center">
-                        <p className="text-4xl font-extrabold text-teal-200">{stat.value}</p>
-                        <p className="mt-1 text-sm text-white/70">{stat.label}</p>
+                    <div
+                        key={stat.label}
+                        className="glass rounded-2xl p-6 text-center"
+                    >
+                        <p className="text-4xl font-extrabold text-teal-200">
+                            {stat.value}
+                        </p>
+                        <p className="mt-1 text-sm text-white/70">
+                            {stat.label}
+                        </p>
                     </div>
                 ))}
             </section>
@@ -66,15 +74,22 @@ export default function Welcome({ totalRegistered }: Props) {
                 <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
                     <div>
                         <h2 className="text-3xl font-extrabold">Penghargaan</h2>
-                        <p className="mt-1 text-white/70">Setiap kostum punya kesempatan untuk bersinar.</p>
+                        <p className="mt-1 text-white/70">
+                            Setiap kostum punya kesempatan untuk bersinar.
+                        </p>
                     </div>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {awards.map((award) => (
-                        <div key={award.title} className="glass rounded-2xl p-6">
+                        <div
+                            key={award.title}
+                            className="glass rounded-2xl p-6"
+                        >
                             <div className="text-3xl">{award.icon}</div>
                             <h3 className="mt-3 font-bold">{award.title}</h3>
-                            <p className="mt-1 text-sm text-white/70">{award.text}</p>
+                            <p className="mt-1 text-sm text-white/70">
+                                {award.text}
+                            </p>
                         </div>
                     ))}
                 </div>
@@ -85,20 +100,34 @@ export default function Welcome({ totalRegistered }: Props) {
             <section className="mx-auto max-w-6xl px-6 py-20">
                 <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <h2 className="text-3xl font-extrabold">Jadwal Singkat</h2>
-                        <p className="mt-1 text-white/70">Jadwal lengkap ada di halaman khusus.</p>
+                        <h2 className="text-3xl font-extrabold">
+                            Jadwal Singkat
+                        </h2>
+                        <p className="mt-1 text-white/70">
+                            Jadwal lengkap ada di halaman khusus.
+                        </p>
                     </div>
-                    <Link href={schedulePage()} className="text-sm font-semibold text-teal-200 hover:underline">
+                    <Link
+                        href={schedulePage()}
+                        className="text-sm font-semibold text-teal-200 hover:underline"
+                    >
                         Lihat semua jadwal →
                     </Link>
                 </div>
                 <ol className="grid gap-3">
                     {schedule.slice(0, 3).map((item) => (
-                        <li key={item.time} className="glass flex items-center gap-5 rounded-2xl p-5">
-                            <span className="font-mono text-lg font-bold text-teal-200">{item.time}</span>
+                        <li
+                            key={item.time}
+                            className="glass flex items-center gap-5 rounded-2xl p-5"
+                        >
+                            <span className="font-mono text-lg font-bold text-teal-200">
+                                {item.time}
+                            </span>
                             <div>
                                 <p className="font-semibold">{item.title}</p>
-                                <p className="text-sm text-white/65">{item.description}</p>
+                                <p className="text-sm text-white/65">
+                                    {item.description}
+                                </p>
                             </div>
                         </li>
                     ))}
@@ -107,8 +136,13 @@ export default function Welcome({ totalRegistered }: Props) {
 
             <section className="mx-auto max-w-4xl px-6 pb-24">
                 <div className="glass rounded-3xl p-10 text-center">
-                    <h2 className="text-3xl font-extrabold">Siap jadi bagian dari lautan?</h2>
-                    <p className="mt-3 text-white/70">Pendaftaran terbuka. Kode tiket dikirim langsung ke emailmu.</p>
+                    <h2 className="text-3xl font-extrabold">
+                        Siap jadi bagian dari lautan?
+                    </h2>
+                    <p className="mt-3 text-white/70">
+                        Pendaftaran terbuka. Kode tiket dikirim langsung ke
+                        emailmu.
+                    </p>
                     <Link
                         href={registration()}
                         className="mt-7 inline-block rounded-full bg-gradient-to-r from-teal-300 to-sky-400 px-8 py-3.5 font-bold text-slate-900 shadow-lg shadow-teal-400/30 transition hover:scale-105"
